@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,8 +30,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarFallback } from "@radix-ui/react-avatar";
 
 // Menu items.
 const items = [
@@ -59,10 +57,14 @@ const items = [
 
 export function AppSidebar() {
   const router = useRouter();
-  const session = authClient.useSession();
   const handlerSignOut = async () => {
-    await authClient.signOut();
-    router.push("/authentication");
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/authentication");
+        },
+      },
+    });
   };
   return (
     <Sidebar>
@@ -88,30 +90,22 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton>
-              <Avatar>
-                <AvatarFallback>
-                  <div></div>
-                </AvatarFallback>
-              </Avatar>
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="border-border bg-popover w-56 rounded-lg border p-2 shadow-xl"
-          >
-            <DropdownMenuItem
-              onClick={handlerSignOut}
-              className="group text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors"
-            >
-              <LogOut className="text-destructive h-4 w-4 transition-transform group-hover:scale-110" />
-              Sair
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>Clinica</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handlerSignOut}>
+                  <LogOut />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
