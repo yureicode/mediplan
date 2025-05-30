@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { db } from "@/app/db";
+import { usersToClinicsTable } from "@/app/db/schema";
 import { auth } from "@/lib/auth";
 
-import { db } from "../db";
-import { usersToClinicsTable } from "../db/schema";
 import SignOutButton from "./_components/sign-out-button";
 
 const DashboardPage = async () => {
